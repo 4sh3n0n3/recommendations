@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Course</title>
+</head>
+<body>
+<div>
+    <form class="form-row" method="post" action="{% url 'main:new_course' %}">
+        {% csrf_token %}
+        <input type="text" placeholder="Название курса" name="name">
+        <button type="submit">Сохранить</button>
+    </form>
+</div>
+<p>
+    <a href="{% url 'main:new_user' %}">Создать пользователя</a>
+</p>
+<p>
+    <a href="{% url 'main:select_user' %}">Войти</a>
+</p>
+<p>
+    <div>
+        {% if error_mess %}
+            <h2>{{ error_mess }}</h2>
+        {% endif %}
+    </div>
+</p>
+<p>
+    <div>
+        {% if mess %}
+            <h2>{{ mess }}</h2>
+        {% endif %}
+    </div>
+</p>
+</body>
+</html>

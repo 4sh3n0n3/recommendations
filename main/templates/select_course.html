@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Select courses</title>
+</head>
+<body>
+<p>
+    <h2>Select yo courses here!</h2>
+</p>
+<div>
+    <form class="form-row" method="post" action="{% url 'main:select_courses' username %}">
+        {% csrf_token %}
+        {% for course in courses %}
+            <br>
+            <div>
+              <input type="checkbox" id="{{ course.name }}" name="{{ course.name }}">
+              <label for="{{ course.name }}">{{ course.name }}</label>
+            </div>
+        {%  endfor %}
+        <p>
+            <button type="submit">Отправить</button>
+        </p>
+    </form>
+</div>
+<p>
+    <div>
+        {% if mess %}
+            <h2>{{ mess }}</h2>
+        {% endif %}
+    </div>
+</p>
+</body>
+</html>
