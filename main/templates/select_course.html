@@ -1,34 +1,89 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Select courses</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'recommendations/select_course.css' %}">
 </head>
 <body>
-<p>
-    <h2>Select yo courses here!</h2>
-</p>
-<div>
-    <form class="form-row" method="post" action="{% url 'main:select_courses' username %}">
-        {% csrf_token %}
-        {% for course in courses %}
-            <br>
-            <div>
-              <input type="checkbox" id="{{ course.name }}" name="{{ course.name }}">
-              <label for="{{ course.name }}">{{ course.name }}</label>
-            </div>
-        {%  endfor %}
-        <p>
-            <button type="submit">Отправить</button>
-        </p>
-    </form>
-</div>
-<p>
-    <div>
-        {% if mess %}
-            <h2>{{ mess }}</h2>
-        {% endif %}
+<nav class="navbar navbar-expand-md navbar-dark">
+    <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+
+                <a class="nav-link" href="{% url 'main:new_course' %}">Создать курс</a>
+
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'main:new_user' %}">Добавить пользователя</a>
+
+            </li>
+
+        </ul>
     </div>
-</p>
+    <div class="mx-auto order-0">
+        <a class="navbar-brand mx-auto" href="#">Рекомендательная система курсов</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+    <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'main:select_user' %}">Войти</a>
+            </li>
+
+        </ul>
+    </div>
+</nav>
+<div class="container">
+    <div class="card border-warning">
+        <div class="card-header text-white">
+            <h4>Выберите интересные вам курсы</h4>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-6">
+                    <form class="form-row" method="post" action="{% url 'main:select_courses' username %}">
+                        {% csrf_token %}
+                        {% for course in courses %}
+
+                            <div class="form-check">
+                                <input style="color: white" class="form-check-input" type="checkbox" name="{{ course.name }}" value=""
+                                       id="{{ course.name }}">
+                                <label for="{{ course.name }}">{{ course.name }}</label><br/>
+                            </div>
+                        {% endfor %}
+
+
+                        <input type="submit" id="calculate" class="btn btn-md btn-warning" value="Сохранить">
+
+                    </form>
+
+                </div>
+                <div class="col-lg-6">
+
+                </div>
+            </div>
+
+            <div class="mess">
+                {% if mess %}
+                    <div id="bs-success" class="alert alert-success">
+                        {{ mess }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+
 </body>
 </html>

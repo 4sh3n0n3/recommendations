@@ -102,7 +102,7 @@ def select_courses(request, username):
         context = {
             'username': username,
             'courses': courses,
-            'mess': 'Данные успешно изменены',
+            'mess': 'Данные успешно сохранены',
         }
         return HttpResponse(template.render(context, request))
 
