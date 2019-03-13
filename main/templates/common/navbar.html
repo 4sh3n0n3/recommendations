@@ -7,6 +7,12 @@
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'main:new_user' %}">Добавить пользователя</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'main:view_table' %}">Таблица</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'main:matrix' %}">Матрица близости</a>
+            </li>
         </ul>
     </div>
     <div class="mx-auto order-0">
@@ -17,6 +23,9 @@
     </div>
     <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
         <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/admin">Admin</a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'main:select_user' %}">Войти</a>
             </li>

@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.template import loader
 
 from main.models import User, Choice, Course
-from .utils import get_recommendations_list, get_courses_for_selecting
+from .utils import get_recommendations_list, get_courses_for_selecting, calculate_djakarta
 
 
 def add_user(request):
@@ -114,3 +114,24 @@ def show_recommendations(request, username):
         context.update({'error_mess': 'Такого пользователя не существует!'})
 
     return HttpResponse(template.render(context, request))
+
+
+def matrix(request, username1=None, username2=None):
+    users = User.objects.all()
+
+    context = {
+        'users': users,
+        'username1': username1,
+        'username2': username2
+    }
+
+    if username1 is not None:
+        context['users'] = users.exclude(name=username1)
+    if username2 is not None:
+        context.update({
+            'user1_courses': Choice.objects.filter(user__name=username1).values_list('course__name', flat=True),
+            'user2_courses': Choice.objects.filter(user__name=username2).values_list('course__name', flat=True),
+            'coef': round(calculate_djakarta(username1, username2), 4)
+        })
+
+    return render(request, 'matrix.html', context)
