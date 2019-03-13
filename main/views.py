@@ -68,44 +68,28 @@ def select_user(request):
 
 
 def select_courses(request, username):
-    template = loader.get_template('select_course.html')
+    user = User.objects.get(name=username)
 
-    if request.method == 'GET':
-        courses = Course.objects.all()
-        context = {
-            'username': username,
-            'courses': courses,
-        }
-        return HttpResponse(template.render(context, request))
+    context = {
+        'username': username,
+        'selected_cources_ids': Choice.objects.filter(user=user).values_list('course_id', flat=True),
+        'courses': Course.objects.all(),
+    }
 
     if request.method == 'POST':
-        user = User.objects.get(name=username)
-        courses = Course.objects.all()
+        selected_cources_ids = request.POST.getlist('selected_courses')
+        courses = Course.objects.filter(id__in=selected_cources_ids)
 
-        for course in courses:
-            if request.POST.get(course.name):
-                try:
-                    Choice.objects.get(user=user, course=course)
-                except ObjectDoesNotExist:
-                    choice = Choice()
-                    choice.user = user
-                    choice.course = course
-                    choice.save()
-                    print('Saved: {}'.format(course.name))
-            else:
-                try:
-                    choice = Choice.objects.get(user=user, course=course)
-                except ObjectDoesNotExist:
-                    continue
-                choice.delete()
-                print('Deleted: {}'.format(course.name))
+        # если не совпадает, значит в списке есть курсы, которых у нас в базе нет => пришли говноданные
+        if len(courses) == len(selected_cources_ids):
+            Choice.objects.filter(user=user).delete()
+            for course in courses:
+                Choice.objects.create(user=user, course=course)
+                print('Saved: {}'.format(course.name))
 
-        context = {
-            'username': username,
-            'courses': courses,
-            'mess': 'Данные успешно сохранены',
-        }
-        return HttpResponse(template.render(context, request))
+        context['mess'] = 'Данные успешно сохранены'
+
+    return render(request, 'select_course.html', context)
 
 
 def view_table(request):

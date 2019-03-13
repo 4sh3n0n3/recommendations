@@ -14,16 +14,16 @@
     </tr>
     {% for user in users %}
         <tr>
-        <td>{{ user.name }}</td>
-        {% for course in courses %}
-            <td style="text-align: center">
-                {% for us in course.users.all %}
-                    {% if us.name == user.name %}
-                        +
-                    {% endif %}
-                {% endfor %}
-            </td>
-        {% endfor %}
+            <td>{{ user.name }}</td>
+            {% for course in courses %}
+                <td style="text-align: center">
+                    {% for us in course.users.all %}
+                        {% if us.id == user.id %}
+                            +
+                        {% endif %}
+                    {% endfor %}
+                </td>
+            {% endfor %}
         </tr>
     {% endfor %}
 </table>

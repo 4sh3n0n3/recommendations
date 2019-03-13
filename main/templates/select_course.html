@@ -22,21 +22,19 @@
                     <form class="form-row" method="post" action="{% url 'main:select_courses' username %}">
                         {% csrf_token %}
                         {% for course in courses %}
-
                             <div class="form-check">
-                                <input style="color: white" class="form-check-input" type="checkbox" name="{{ course.name }}" value=""
-                                       id="{{ course.name }}">
+                                <input style="color: white" class="form-check-input" type="checkbox"
+                                       name="selected_courses" value="{{ course.id }}" id="{{ course.name }}"
+                                    {% if course.id in selected_cources_ids %}
+                                        checked
+                                   {% endif %}
+                                >
                                 <label for="{{ course.name }}">{{ course.name }}</label><br/>
                             </div>
                         {% endfor %}
 
-
                         <input type="submit" id="calculate" class="btn btn-md btn-warning" value="Сохранить">
-
                     </form>
-
-                </div>
-                <div class="col-lg-6">
 
                 </div>
             </div>
