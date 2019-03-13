@@ -76,19 +76,21 @@ def view_table(request):
     })
 
 
-def show_recommendations(request, username):
-    template = loader.get_template('recommendations_list.html')
-    recommendations = get_recommendations_list(username)
+def show_recommendations(request, username=None):
+    if username is None:
+        context = {'users': User.objects.all()}
+    else:
+        recommendations = get_recommendations_list(username)
 
-    context = {
-        'username': username,
-        'recommendations': recommendations,
-    }
+        context = {
+            'username': username,
+            'recommendations': recommendations,
+        }
 
-    if recommendations is None:
-        context.update({'error_mess': 'Такого пользователя не существует!'})
+        if recommendations is None:
+            context.update({'error_mess': 'Такого пользователя не существует!'})
 
-    return HttpResponse(template.render(context, request))
+    return render(request, 'recommendations_list.html', context)
 
 
 def matrix(request, username1=None):

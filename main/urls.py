@@ -8,6 +8,7 @@ urlpatterns = [
     path('select_user/', select_user, name='select_user'),
     path('select_courses/<str:username>/', select_courses, name='select_courses'),
     path('table/', view_table, name='view_table'),
+    path('recomm/', show_recommendations, name='show_recommendations_list'),
     path('recomm/<str:username>/', show_recommendations, name='show_recommendations'),
     path('matrix/', matrix, name='matrix'),
     path('matrix/<str:username1>/', matrix, name='matrix1')

@@ -23,9 +23,15 @@
 
         <div class="card-body">
             <ul class="list-group">
-                {% for key, value in recommendations.items %}
-                    <li class="list-group-item">{{ key }}: {{ value }}</li>
-                {% endfor %}
+                {% if users %}
+                    {% for user in users %}
+                        <a href="{% url 'main:show_recommendations' user.name %}" class="list-group-item">{{ user.name }}</a>
+                    {% endfor %}
+                {% else %}
+                    {% for key, value in recommendations.items %}
+                        <li class="list-group-item"><b>{{ key }}</b> <small>(кол-во совпадений {{ value }})</small></li>
+                    {% endfor %}
+                {% endif %}
             </ul>
         </div>
     </div>
