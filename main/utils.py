@@ -1,17 +1,25 @@
+from django.core.exceptions import ObjectDoesNotExist
+
 from .models import *
 
 
 COEFF_MIN_VALUE = 0.5
 
 
-def get_recommendations_list(aimed_user):
-    all_users = User.objects.all().exclude(name=aimed_user.name)
+def get_recommendations_list(username):
+    try:
+        aimed_user = User.objects.get(name=username)
+    except ObjectDoesNotExist:
+        return None
+    all_users = User.objects.all().exclude(name=username)
+    aimed_courses = aimed_user.courses.get_queryset()
     courses_dict = {}
 
     for user in all_users:
-        intersection = list(user.courses.get_queryset().intersection(aimed_user.courses.get_queryset()))
-        union = list(user.courses.get_queryset().union(aimed_user.courses.get_queryset()))
-        diff = list(set(user.courses.get_queryset()) - set(aimed_user.courses.get_queryset()))
+        courses = user.courses.get_queryset()
+        intersection = list(courses.intersection(aimed_courses))
+        union = list(courses.union(aimed_courses))
+        diff = list(set(courses) - set(aimed_courses))
 
         coeff = len(intersection) / len(union)
         if coeff >= COEFF_MIN_VALUE:
@@ -29,4 +37,9 @@ def get_recommendations_list(aimed_user):
         top_5.append(item)
         if counter == 5:
             break
-    return top_5
+
+    top_dict = {}
+    for item in top_5:
+        top_dict.update({item[0].name: item[1]})
+    print(top_dict)
+    return top_dict

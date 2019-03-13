@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Recommendations</title>
+</head>
+<body>
+<h1>Recommendations for user {{ username }}</h1>
+
+{% for key, value in recommendations.items %}
+
+    <li>{{ key }}: {{ value }}</li>
+
+{% endfor %}
+</body>
+</html>
