@@ -19,6 +19,13 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-lg-6">
+                    <div class="mess">
+                        {% if mess %}
+                            <div id="bs-success" class="alert alert-success">
+                                {{ mess }}
+                            </div>
+                        {% endif %}
+                    </div>
                     <form class="form-row" method="post" action="{% url 'main:select_courses' username %}">
                         {% csrf_token %}
                         {% for course in courses %}
@@ -38,21 +45,8 @@
 
                 </div>
             </div>
-
-            <div class="mess">
-                {% if mess %}
-                    <div id="bs-success" class="alert alert-success">
-                        {{ mess }}
-                    </div>
-                {% endif %}
-            </div>
         </div>
-
-
     </div>
 </div>
-
-
-
 </body>
 </html>

@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.template import loader
 
 from main.models import User, Choice, Course
-from .utils import get_recommendations_list
+from .utils import get_recommendations_list, get_courses_for_selecting
 
 
 def add_user(request):
@@ -70,10 +70,12 @@ def select_user(request):
 def select_courses(request, username):
     user = User.objects.get(name=username)
 
+    selected_cources_ids = Choice.objects.filter(user=user).values_list('course_id', flat=True)
+
     context = {
         'username': username,
-        'selected_cources_ids': Choice.objects.filter(user=user).values_list('course_id', flat=True),
-        'courses': Course.objects.all(),
+        'selected_cources_ids': selected_cources_ids,
+        'courses': get_courses_for_selecting(selected_cources_ids),
     }
 
     if request.method == 'POST':
@@ -93,14 +95,10 @@ def select_courses(request, username):
 
 
 def view_table(request):
-    template = loader.get_template('result_table.html')
-    users = User.objects.all()
-    courses = Course.objects.all()
-    context = {
-        'users': users,
-        'courses': courses,
-    }
-    return HttpResponse(template.render(context, request))
+    return render(request, 'result_table.html', {
+        'users': User.objects.all(),
+        'courses': Course.objects.all(),
+    })
 
 
 def show_recommendations(request, username):
