@@ -1,7 +1,5 @@
 from django.db.utils import IntegrityError
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.template import loader
 
 from main.models import User, Choice, Course
 from .utils import get_recommendations_list, get_courses_for_selecting, calculate_djakarta
@@ -98,11 +96,12 @@ def matrix(request, username1=None):
 
     if username1 is not None:
         res = []
+        user1_courses = Choice.objects.filter(user__name=username1).values_list('course__name', flat=True)
         for user in User.objects.exclude(name=username1):
             res.append({
                 'username1': username1,
                 'username2': user.name,
-                'user1_courses': Choice.objects.filter(user__name=username1).values_list('course__name', flat=True),
+                'user1_courses': user1_courses,
                 'user2_courses': Choice.objects.filter(user__name=user.name).values_list('course__name', flat=True),
                 'coef': round(calculate_djakarta(username1, user.name), 4)
             })

@@ -1,44 +1,41 @@
 from math import sqrt
 
-from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count
 
-from .models import *
+from main.models import User, Course, Choice
 
 COEFF_MIN_VALUE = 0.5
+
+
+def djakarta_coef(courses1, courses2):
+    # C = A intersection with B
+    c = set(courses1).intersection(courses2)
+
+    # |C|/(sqrt (|A|*|B|))
+    return len(c) / sqrt(len(courses1) * len(courses2))
 
 
 def get_recommendations_list(username):
     try:
         aimed_user = User.objects.get(name=username)
-    except ObjectDoesNotExist:
+    except User.DoesNotExist:
         return None
-    all_users = User.objects.all().exclude(name=username)
-    aimed_courses = aimed_user.courses.get_queryset()
+
+    all_users = User.objects.exclude(name=username)
+    aimed_courses = aimed_user.courses.all()
     courses_dict = {}
 
     for user in all_users:
-        courses = user.courses.get_queryset()
-        intersection = list(courses.intersection(aimed_courses))
-        union = list(courses.union(aimed_courses))
+        courses = user.courses.all()
         diff = list(set(courses) - set(aimed_courses))
 
-        coeff = len(intersection) / len(union)
+        coeff = djakarta_coef(courses, aimed_courses)
         if coeff >= COEFF_MIN_VALUE:
             for course in diff:
-                val = courses_dict.get(course)
-                if val is None:
-                    val = 0
-                courses_dict.update({course: val + 1})
+                courses_dict.update({course: courses_dict.get(course, 0) + 1})
 
     sorted_by_value = sorted(courses_dict.items(), key=lambda kv: kv[1])
-    top_5 = []
-    counter = 0
-    for item in reversed(sorted_by_value):
-        counter += 1
-        top_5.append(item)
-        if counter == 5:
-            break
+    top_5 = reversed(sorted_by_value)[:5]
 
     top_dict = {}
     for item in top_5:
@@ -58,11 +55,6 @@ def get_courses_for_selecting(selected_cources_ids):
 
 
 def calculate_djakarta(username1, username2):
-    courses1 = Choice.objects.filter(user__name=username1).values_list('course__id', flat=True)
-    courses2 = Choice.objects.filter(user__name=username2).values_list('course__id', flat=True)
-
-    # C = A intersection with B
-    c = set(courses1).intersection(courses2)
-
-    # |C|/(sqrt (|A|*|B|))
-    return len(c) / sqrt(len(courses1) * len(courses2))
+    courses1 = Choice.objects.filter(user__name=username1)
+    courses2 = Choice.objects.filter(user__name=username2)
+    return djakarta_coef(courses1, courses2)
