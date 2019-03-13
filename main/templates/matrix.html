@@ -23,8 +23,8 @@
                 {% if username2 is none %}
                     - выбор пользователя
                 {% endif %}
+                <a href="{% url 'main:matrix' %}" class="btn btn-sm btn-primary" style="float: right;">Выбрать пользователей</a>
             </h4>
-            <a href="{% url 'main:matrix' %}" class="btn btn-sm btn-primary">Выбрать пользователей</a>
         </div>
 
         <div class="card-body">
