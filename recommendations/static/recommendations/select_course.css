@@ -1,0 +1,70 @@
+body, html {
+    height: 100%;
+    background-color: #282a3b;
+}
+
+
+.mess {
+    margin-top: 20px;
+}
+
+.error {
+
+    margin-top: 10px;
+}
+.form-check{
+    margin-right: 200px;
+}
+.form-group {
+    color: white;
+}
+
+nav {
+    background-color: #202230;
+}
+
+.container {
+    margin-top: 10px;
+}
+
+label {
+    color: white;
+}
+
+.card {
+    margin-top: 30px;
+    background-color: #282a3b;
+}
+
+.card-header {
+    background-color: #202230;
+}
+
+h5 {
+    color: white;
+    font-size: 18px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.btn-group.special {
+    display: flex;
+}
+
+.btn-warning {
+    text-align: center;
+
+    margin-top: 20px;
+    width: 30%;
+}
+
+.modal-dialog {
+    max-width: 92% !important;
+}
+
+#bs-warning {
+    width: 95%;
+    margin: auto;
+    margin-top: 20px;
+}
+

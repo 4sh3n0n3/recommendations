@@ -1,7 +1,9 @@
+from math import sqrt
+
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Count
 
 from .models import *
-
 
 COEFF_MIN_VALUE = 0.5
 
@@ -43,3 +45,24 @@ def get_recommendations_list(username):
         top_dict.update({item[0].name: item[1]})
     print(top_dict)
     return top_dict
+
+
+def get_courses_for_selecting(selected_cources_ids):
+    selected_cources = Course.objects.filter(id__in=selected_cources_ids)
+
+    not_selected = Course.objects.exclude(id__in=selected_cources_ids).annotate(selected_count=Count('choices'))
+    min_popuplar = not_selected.order_by('selected_count')[:4]
+    max_popular = not_selected.exclude(id__in=min_popuplar.values_list('id', flat=True)).order_by('-selected_count')[:4]
+
+    return list(selected_cources) + list(min_popuplar) + list(max_popular)
+
+
+def calculate_djakarta(username1, username2):
+    courses1 = Choice.objects.filter(user__name=username1).values_list('course__id', flat=True)
+    courses2 = Choice.objects.filter(user__name=username2).values_list('course__id', flat=True)
+
+    # C = A intersection with B
+    c = set(courses1).intersection(courses2)
+
+    # |C|/(sqrt (|A|*|B|))
+    return len(c) / sqrt(len(courses1) * len(courses2))

@@ -1,31 +1,51 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Results</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'recommendations/select_course.css' %}">
+    <style>
+        .white {
+            color: white;
+        }
+    </style>
 </head>
 <body>
-<table border="1">
-    <tr>
-        <td></td>
-        {% for course in courses %}
-            <td> {{ course.name }}</td>
-        {% endfor %}
-    </tr>
-    {% for user in users %}
-        <tr>
-        <td>{{ user.name }}</td>
-        {% for course in courses %}
-            <td style="text-align: center">
-                {% for us in course.users.all %}
-                    {% if us.name == user.name %}
-                        +
-                    {% endif %}
+{% include 'common/navbar.html' %}
+<div class="container">
+    <div class="card border-warning">
+        <div class="card-header text-white">
+            <h4>Таблица результатов</h4>
+        </div>
+
+        <div class="card-body">
+            <table class="table table-bordered table-condensed table-hover white">
+                <tr class="text-center">
+                    <td></td>
+                    {% for course in courses %}
+                        <th>{{ course.name }}</th>
+                    {% endfor %}
+                </tr>
+                {% for user in users %}
+                    <tr>
+                        <th>{{ user.name }}</th>
+                        {% for course in courses %}
+                            <td class="text-center">
+                                {% for us in course.users.all %}
+                                    {% if us.id == user.id %}
+                                        +
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                        {% endfor %}
+                    </tr>
                 {% endfor %}
-            </td>
-        {% endfor %}
-        </tr>
-    {% endfor %}
-</table>
+            </table>
+        </div>
+    </div>
+</div>
 </body>
 </html>

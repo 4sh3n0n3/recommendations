@@ -4,27 +4,51 @@
 <head>
     <meta charset="UTF-8">
     <title>New User</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'recommendations/add_user.css' %}">
+
 </head>
 <body>
-<div>
-    <form class="form-row" method="post" action="{% url 'main:new_user' %}">
-        {% csrf_token %}
-        <input type="text" placeholder="Имя пользователя" name="name">
-        <button type="submit">Сохранить</button>
-    </form>
-</div>
-<p>
-    <a href="{% url 'main:new_course' %}">Создать курс</a>
-</p>
-<p>
-    <a href="{% url 'main:select_user' %}">Войти</a>
-</p>
-<p>
-    <div>
-        {% if error_mess %}
-            <h2>{{ error_mess }}</h2>
-        {% endif %}
+{% include 'common/navbar.html' %}
+<div class="container">
+    <div class="card border-warning">
+        <div class="card-header text-white">
+            <h4>Добавить пользователя</h4>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="error">
+                        {% if error_mess %}
+                            <div id="bs-danger" class="alert alert-danger">
+                                <strong>Внимание!</strong> {{ error_mess }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <form class="form-row" method="post" action="{% url 'main:new_user' %}">
+                        {% csrf_token %}
+
+                        <h5 for="exampleInputEmail1" style="color:white;">Имя пользователя</h5>
+                        <input type="text" class="form-control" id="exampleInputEmail1"
+                               aria-describedby="emailHelp" placeholder="Введите имя пользователя"
+                               name="name">
+
+                        <input type="submit" id="calculate" class="btn btn-md btn-warning" value="Сохранить">
+
+                    </form>
+
+                </div>
+                <div class="col-lg-6">
+
+                </div>
+            </div>
+
+
+        </div>
+
     </div>
-</p>
+</div>
 </body>
 </html>

@@ -1,134 +1,113 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.template import loader
-from .models import *
-from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import IntegrityError
-from .utils import get_recommendations_list
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from django.template import loader
 
-# Create your views here.
+from main.models import User, Choice, Course
+from .utils import get_recommendations_list, get_courses_for_selecting, calculate_djakarta
 
 
 def add_user(request):
-    template = loader.get_template('add_user.html')
-
-    if request.method == 'GET':
-        return HttpResponse(template.render({}, request))
-
     if request.method == 'POST':
-        user = User()
-        user.name = request.POST['name']
         try:
-            user.save()
+            user = User.objects.create(name=request.POST['name'])
         except IntegrityError:
-            return HttpResponse(template.render({'error_mess': 'Пользователь уже существует!'}, request))
-        template = loader.get_template('select_course.html')
-        courses = Course.objects.all()
-        context = {
-            'username': user.name,
-            'courses': courses,
-        }
-        return HttpResponse(template.render(context, request))
+            return render(request, 'add_user.html', {'error_mess': 'Пользователь уже существует!'})
+        return redirect('main:select_courses', user.name)
+    return render(request, 'add_user.html')
 
 
 def add_course(request):
-    template = loader.get_template('add_course.html')
-
-    if request.method == 'GET':
-        return HttpResponse(template.render({}, request))
-
     if request.method == 'POST':
-        course = Course()
-        course.name = request.POST['name']
         try:
-            course.save()
+            Course.objects.create(name=request.POST['name'])
         except IntegrityError:
-            return HttpResponse(template.render({'error_mess': 'Курс уже существует!'}, request))
-        return HttpResponse(template.render({'mess': 'Курс успешно сохранен'}, request))
+            return render(request, 'add_course.html', {'error_mess': 'Курс уже существует!'})
+        return render(request, 'add_course.html', {'mess': 'Курс успешно сохранен'})
+    return render(request, 'add_course.html')
 
 
 def select_user(request):
-    template = loader.get_template('select_user.html')
+    context = {'users': User.objects.all()}
 
     if request.method == 'GET':
-        return HttpResponse(template.render({}, request))
+        return render(request, 'select_user.html', context)
 
     if request.method == 'POST':
         try:
             user = User.objects.get(name=request.POST['name'])
-        except ObjectDoesNotExist:
-            return HttpResponse(template.render({'error_mess': 'Пользователь не существует!'}, request))
-        template = loader.get_template('select_course.html')
-        courses = Course.objects.all()
-        context = {
-            'username': user.name,
-            'courses': courses,
-        }
-        return HttpResponse(template.render(context, request))
+        except User.DoesNotExist:
+            context['error_mess'] = 'Пользователь не существует!'
+            return render(request, 'select_user.html', context)
+        return redirect('main:select_courses', user.name)
 
 
 def select_courses(request, username):
-    template = loader.get_template('select_course.html')
+    user = User.objects.get(name=username)
 
-    if request.method == 'GET':
-        courses = Course.objects.all()
-        context = {
-            'username': username,
-            'courses': courses,
-        }
-        return HttpResponse(template.render(context, request))
-
-    if request.method == 'POST':
-        user = User.objects.get(name=username)
-        courses = Course.objects.all()
-
-        for course in courses:
-            if request.POST.get(course.name):
-                try:
-                    Choice.objects.get(user=user, course=course)
-                except ObjectDoesNotExist:
-                    choice = Choice()
-                    choice.user = user
-                    choice.course = course
-                    choice.save()
-                    print('Saved: {}'.format(course.name))
-            else:
-                try:
-                    choice = Choice.objects.get(user=user, course=course)
-                except ObjectDoesNotExist:
-                    continue
-                choice.delete()
-                print('Deleted: {}'.format(course.name))
-
-        context = {
-            'username': username,
-            'courses': courses,
-            'mess': 'Данные успешно изменены',
-        }
-        return HttpResponse(template.render(context, request))
-
-
-def view_table(request):
-    template = loader.get_template('result_table.html')
-    users = User.objects.all()
-    courses = Course.objects.all()
-    context = {
-        'users': users,
-        'courses': courses,
-    }
-    return HttpResponse(template.render(context, request))
-
-
-def show_recommendations(request, username):
-    template = loader.get_template('recommendations_list.html')
-    recommendations = get_recommendations_list(username)
+    selected_cources_ids = Choice.objects.filter(user=user).values_list('course_id', flat=True)
 
     context = {
         'username': username,
-        'recommendations': recommendations,
+        'selected_cources_ids': selected_cources_ids,
+        'courses': get_courses_for_selecting(selected_cources_ids),
     }
 
-    if recommendations is None:
-        context.update({'error_mess': 'Такого пользователя не существует!'})
+    if request.method == 'POST':
+        selected_cources_ids = request.POST.getlist('selected_courses')
+        courses = Course.objects.filter(id__in=selected_cources_ids)
 
-    return HttpResponse(template.render(context, request))
+        # если не совпадает, значит в списке есть курсы, которых у нас в базе нет => пришли говноданные
+        if len(courses) == len(selected_cources_ids):
+            Choice.objects.filter(user=user).delete()
+            for course in courses:
+                Choice.objects.create(user=user, course=course)
+                print('Saved: {}'.format(course.name))
+
+        context['mess'] = 'Данные успешно сохранены'
+
+    return render(request, 'select_course.html', context)
+
+
+def view_table(request):
+    return render(request, 'result_table.html', {
+        'users': User.objects.all(),
+        'courses': Course.objects.all(),
+    })
+
+
+def show_recommendations(request, username=None):
+    if username is None:
+        context = {'users': User.objects.all()}
+    else:
+        recommendations = get_recommendations_list(username)
+
+        context = {
+            'username': username,
+            'recommendations': recommendations,
+        }
+
+        if recommendations is None:
+            context.update({'error_mess': 'Такого пользователя не существует!'})
+
+    return render(request, 'recommendations_list.html', context)
+
+
+def matrix(request, username1=None):
+    context = {'username1': username1}
+
+    if username1 is not None:
+        res = []
+        for user in User.objects.exclude(name=username1):
+            res.append({
+                'username1': username1,
+                'username2': user.name,
+                'user1_courses': Choice.objects.filter(user__name=username1).values_list('course__name', flat=True),
+                'user2_courses': Choice.objects.filter(user__name=user.name).values_list('course__name', flat=True),
+                'coef': round(calculate_djakarta(username1, user.name), 4)
+            })
+        context['result'] = res
+    else:
+        context['users'] = User.objects.all()
+
+    return render(request, 'matrix.html', context)

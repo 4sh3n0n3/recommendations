@@ -1,16 +1,40 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Recommendations</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'recommendations/select_course.css' %}">
+    <style>
+        .white {
+            color: white;
+        }
+    </style>
 </head>
 <body>
-<h1>Recommendations for user {{ username }}</h1>
+{% include 'common/navbar.html' %}
+<div class="container">
+    <div class="card border-warning">
+        <div class="card-header text-white">
+            <h4>Таблица результатов</h4>
+        </div>
 
-{% for key, value in recommendations.items %}
-
-    <li>{{ key }}: {{ value }}</li>
-
-{% endfor %}
+        <div class="card-body">
+            <ul class="list-group">
+                {% if users %}
+                    {% for user in users %}
+                        <a href="{% url 'main:show_recommendations' user.name %}" class="list-group-item">{{ user.name }}</a>
+                    {% endfor %}
+                {% else %}
+                    {% for key, value in recommendations.items %}
+                        <li class="list-group-item"><b>{{ key }}</b> <small>(кол-во совпадений {{ value }})</small></li>
+                    {% endfor %}
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
 </body>
 </html>

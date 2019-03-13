@@ -1,34 +1,52 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Select courses</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'recommendations/select_course.css' %}">
 </head>
 <body>
-<p>
-    <h2>Select yo courses here!</h2>
-</p>
-<div>
-    <form class="form-row" method="post" action="{% url 'main:select_courses' username %}">
-        {% csrf_token %}
-        {% for course in courses %}
-            <br>
-            <div>
-              <input type="checkbox" id="{{ course.name }}" name="{{ course.name }}">
-              <label for="{{ course.name }}">{{ course.name }}</label>
+{% include 'common/navbar.html' %}
+<div class="container">
+    <div class="card border-warning">
+        <div class="card-header text-white">
+            <h4>Выберите интересные вам курсы</h4>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="mess">
+                        {% if mess %}
+                            <div id="bs-success" class="alert alert-success">
+                                {{ mess }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <form class="form-row" method="post" action="{% url 'main:select_courses' username %}">
+                        {% csrf_token %}
+                        {% for course in courses %}
+                            <div class="form-check">
+                                <input style="color: white" class="form-check-input" type="checkbox"
+                                       name="selected_courses" value="{{ course.id }}" id="{{ course.name }}"
+                                    {% if course.id in selected_cources_ids %}
+                                        checked
+                                   {% endif %}
+                                >
+                                <label for="{{ course.name }}">{{ course.name }}</label><br/>
+                            </div>
+                        {% endfor %}
+
+                        <input type="submit" id="calculate" class="btn btn-md btn-warning" value="Сохранить">
+                    </form>
+
+                </div>
             </div>
-        {%  endfor %}
-        <p>
-            <button type="submit">Отправить</button>
-        </p>
-    </form>
-</div>
-<p>
-    <div>
-        {% if mess %}
-            <h2>{{ mess }}</h2>
-        {% endif %}
+        </div>
     </div>
-</p>
+</div>
 </body>
 </html>
