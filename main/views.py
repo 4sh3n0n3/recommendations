@@ -1,12 +1,11 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.template import loader
-from .models import *
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import IntegrityError
-from .utils import get_recommendations_list
+from django.http import HttpResponse
+from django.shortcuts import render
+from django.template import loader
 
-# Create your views here.
+from main.models import User, Choice, Course
+from .utils import get_recommendations_list
 
 
 def add_user(request):
@@ -48,16 +47,17 @@ def add_course(request):
 
 
 def select_user(request):
-    template = loader.get_template('select_user.html')
+    context = {'users': User.objects.all()}
 
     if request.method == 'GET':
-        return HttpResponse(template.render({}, request))
+        return render(request, 'select_user.html', context)
 
     if request.method == 'POST':
         try:
             user = User.objects.get(name=request.POST['name'])
         except ObjectDoesNotExist:
-            return HttpResponse(template.render({'error_mess': 'Пользователь не существует!'}, request))
+            context['error_mess'] = 'Пользователь не существует!'
+            return render(request, 'select_user.html', context)
         template = loader.get_template('select_course.html')
         courses = Course.objects.all()
         context = {

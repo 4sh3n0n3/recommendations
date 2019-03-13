@@ -9,36 +9,7 @@
     <link rel="stylesheet" href="{% static 'recommendations/select_course.css' %}">
 </head>
 <body>
-<nav class="navbar navbar-expand-md navbar-dark">
-    <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-
-                <a class="nav-link" href="{% url 'main:new_course' %}">Создать курс</a>
-
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'main:new_user' %}">Добавить пользователя</a>
-
-            </li>
-
-        </ul>
-    </div>
-    <div class="mx-auto order-0">
-        <a class="navbar-brand mx-auto" href="#">Рекомендательная система курсов</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-    <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'main:select_user' %}">Войти</a>
-            </li>
-
-        </ul>
-    </div>
-</nav>
+{% include 'common/navbar.html' %}
 <div class="container">
     <div class="card border-warning">
         <div class="card-header text-white">
