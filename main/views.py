@@ -116,22 +116,21 @@ def show_recommendations(request, username):
     return HttpResponse(template.render(context, request))
 
 
-def matrix(request, username1=None, username2=None):
-    users = User.objects.all()
-
-    context = {
-        'users': users,
-        'username1': username1,
-        'username2': username2
-    }
+def matrix(request, username1=None):
+    context = {'username1': username1}
 
     if username1 is not None:
-        context['users'] = users.exclude(name=username1)
-    if username2 is not None:
-        context.update({
-            'user1_courses': Choice.objects.filter(user__name=username1).values_list('course__name', flat=True),
-            'user2_courses': Choice.objects.filter(user__name=username2).values_list('course__name', flat=True),
-            'coef': round(calculate_djakarta(username1, username2), 4)
-        })
+        res = []
+        for user in User.objects.exclude(name=username1):
+            res.append({
+                'username1': username1,
+                'username2': user.name,
+                'user1_courses': Choice.objects.filter(user__name=username1).values_list('course__name', flat=True),
+                'user2_courses': Choice.objects.filter(user__name=user.name).values_list('course__name', flat=True),
+                'coef': round(calculate_djakarta(username1, user.name), 4)
+            })
+        context['result'] = res
+    else:
+        context['users'] = User.objects.all()
 
     return render(request, 'matrix.html', context)

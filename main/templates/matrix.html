@@ -24,47 +24,43 @@
                     - выбор пользователя
                 {% endif %}
             </h4>
+            <a href="{% url 'main:matrix' %}" class="btn btn-sm btn-primary">Выбрать пользователей</a>
         </div>
 
         <div class="card-body">
             <div class="row">
-                {% if username2 is none %}
+                {% if username1 is none %}
                     <div class="col-lg-12">
                         <div class="list-group">
                             {% for user in users %}
-                                {% if username1 is not none %}
-                                    <a class="list-group-item" href="{% url 'main:matrix2' username1 user.name %}">
-                                        {{ user.name }}
-                                    </a>
-                                {% else %}
-                                    <a class="list-group-item" href="{% url 'main:matrix1' user.name %}">
-                                        {{ user.name }}
-                                    </a>
-                                {% endif %}
+                                <a class="list-group-item" href="{% url 'main:matrix1' user.name %}">
+                                    {{ user.name }}
+                                </a>
                             {% endfor %}
                         </div>
                     </div>
                 {% else %}
-                    <div class="col-lg-6">
-                        <h4 class="white">{{ username1 }}</h4>
-                        <p class="white">
-                            {% for c in user1_courses %}
-                                {{ c }},
-                            {% endfor %}
-                        </p>
-                    </div>
-                    <div class="col-lg-6">
-                        <h4 class="white">{{ username2 }}</h4>
-
-                        <p class="white">
-                            {% for c in user2_courses %}
-                                {{ c }},
-                            {% endfor %}
-                        </p>
-                    </div>
-                    <div class="col-lg-12 text-center">
-                        <h1 class="white">{{ coef }}</h1>
-                    </div>
+                    {% for r in result %}
+                        <div class="col-lg-4">
+                            <h4 class="white">{{ r.username1 }}</h4>
+                            <p class="white">
+                                {% for c in r.user1_courses %}
+                                    {{ c }},
+                                {% endfor %}
+                            </p>
+                        </div>
+                        <div class="col-lg-4">
+                            <h4 class="white">{{ r.username2 }}</h4>
+                            <p class="white">
+                                {% for c in r.user2_courses %}
+                                    {{ c }},
+                                {% endfor %}
+                            </p>
+                        </div>
+                        <div class="col-lg-4">
+                            <h1 class="white">{{ r.coef }}</h1>
+                        </div>
+                    {% endfor %}
                 {% endif %}
             </div>
         </div>

@@ -10,6 +10,5 @@ urlpatterns = [
     path('table/', view_table, name='view_table'),
     path('recomm/<str:username>/', show_recommendations, name='show_recommendations'),
     path('matrix/', matrix, name='matrix'),
-    path('matrix/<str:username1>/', matrix, name='matrix1'),
-    path('matrix/<str:username1>/<str:username2>/', matrix, name='matrix2'),
+    path('matrix/<str:username1>/', matrix, name='matrix1')
 ]
