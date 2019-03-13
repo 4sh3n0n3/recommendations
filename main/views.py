@@ -4,6 +4,7 @@ from django.template import loader
 from .models import *
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import IntegrityError
+from .utils import get_recommendations_list
 
 # Create your views here.
 
@@ -115,4 +116,19 @@ def view_table(request):
         'users': users,
         'courses': courses,
     }
+    return HttpResponse(template.render(context, request))
+
+
+def show_recommendations(request, username):
+    template = loader.get_template('recommendations_list.html')
+    recommendations = get_recommendations_list(username)
+
+    context = {
+        'username': username,
+        'recommendations': recommendations,
+    }
+
+    if recommendations is None:
+        context.update({'error_mess': 'Такого пользователя не существует!'})
+
     return HttpResponse(template.render(context, request))
