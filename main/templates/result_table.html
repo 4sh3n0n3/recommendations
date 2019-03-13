@@ -22,18 +22,18 @@
         </div>
 
         <div class="card-body">
-            <table class="table table-bordered table-condensed white">
-                <tr>
+            <table class="table table-bordered table-condensed table-hover white">
+                <tr class="text-center">
                     <td></td>
                     {% for course in courses %}
-                        <td> {{ course.name }}</td>
+                        <th>{{ course.name }}</th>
                     {% endfor %}
                 </tr>
                 {% for user in users %}
                     <tr>
-                        <td>{{ user.name }}</td>
+                        <th>{{ user.name }}</th>
                         {% for course in courses %}
-                            <td style="text-align: center">
+                            <td class="text-center">
                                 {% for us in course.users.all %}
                                     {% if us.id == user.id %}
                                         +

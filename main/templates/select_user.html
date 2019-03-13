@@ -1,34 +1,46 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
-    <title>Select User</title>
+    <title>Вход</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'recommendations/select_course.css' %}">
+    <style>
+        .white {
+            color: white;
+        }
+    </style>
 </head>
 <body>
-<div>
-    <form class="form-row" method="post" action="{% url 'main:select_user' %}">
-        {% csrf_token %}
-        <select name="name" id="">
-            <option value="">Выбрать пользователя</option>
-            {% for user in users %}
-                <option value="{{ user.name }}">{{ user.name }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit">Выбрать</button>
-    </form>
-</div>
-<p>
-    <a href="{% url 'main:new_course' %}">Создать курс</a>
-</p>
-<p>
-    <a href="{% url 'main:new_user' %}">Создать пользователя</a>
-</p>
-<p>
-    <div>
-        {% if error_mess %}
-            <h2>{{ error_mess }}</h2>
-        {% endif %}
+{% include 'common/navbar.html' %}
+<div class="container">
+    <div class="card border-warning">
+        <div class="card-header text-white">
+            <h4>Вход</h4>
+        </div>
+
+        <div class="card-body">
+            {% if error_mess %}
+                <h2 class="white">{{ error_mess }}</h2>
+            {% endif %}
+            <form method="post" action="{% url 'main:select_user' %}">
+                {% csrf_token %}
+                <div class="input-group mb-3">
+                    <select name="name" class="form-control">
+                        <option value="">Выбрать пользователя</option>
+                        {% for user in users %}
+                            <option value="{{ user.name }}">{{ user.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit" id="button-addon1">Войти</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-</p>
+</div>
 </body>
 </html>

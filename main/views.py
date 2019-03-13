@@ -1,7 +1,6 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.db.utils import IntegrityError
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template import loader
 
 from main.models import User, Choice, Course
@@ -9,41 +8,23 @@ from .utils import get_recommendations_list, get_courses_for_selecting, calculat
 
 
 def add_user(request):
-    template = loader.get_template('add_user.html')
-
-    if request.method == 'GET':
-        return HttpResponse(template.render({}, request))
-
     if request.method == 'POST':
-        user = User()
-        user.name = request.POST['name']
         try:
-            user.save()
+            user = User.objects.create(name=request.POST['name'])
         except IntegrityError:
-            return HttpResponse(template.render({'error_mess': 'Пользователь уже существует!'}, request))
-        template = loader.get_template('select_course.html')
-        courses = Course.objects.all()
-        context = {
-            'username': user.name,
-            'courses': courses,
-        }
-        return HttpResponse(template.render(context, request))
+            return render(request, 'add_user.html', {'error_mess': 'Пользователь уже существует!'})
+        return redirect('main:select_courses', user.name)
+    return render(request, 'add_user.html')
 
 
 def add_course(request):
-    template = loader.get_template('add_course.html')
-
-    if request.method == 'GET':
-        return HttpResponse(template.render({}, request))
-
     if request.method == 'POST':
-        course = Course()
-        course.name = request.POST['name']
         try:
-            course.save()
+            Course.objects.create(name=request.POST['name'])
         except IntegrityError:
-            return HttpResponse(template.render({'error_mess': 'Курс уже существует!'}, request))
-        return HttpResponse(template.render({'mess': 'Курс успешно сохранен'}, request))
+            return render(request, 'add_course.html', {'error_mess': 'Курс уже существует!'})
+        return render(request, 'add_course.html', {'mess': 'Курс успешно сохранен'})
+    return render(request, 'add_course.html')
 
 
 def select_user(request):
@@ -55,16 +36,10 @@ def select_user(request):
     if request.method == 'POST':
         try:
             user = User.objects.get(name=request.POST['name'])
-        except ObjectDoesNotExist:
+        except User.DoesNotExist:
             context['error_mess'] = 'Пользователь не существует!'
             return render(request, 'select_user.html', context)
-        template = loader.get_template('select_course.html')
-        courses = Course.objects.all()
-        context = {
-            'username': user.name,
-            'courses': courses,
-        }
-        return HttpResponse(template.render(context, request))
+        return redirect('main:select_courses', user.name)
 
 
 def select_courses(request, username):

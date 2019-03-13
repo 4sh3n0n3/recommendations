@@ -19,9 +19,11 @@
     <div class="card border-warning">
         <div class="card-header text-white">
             <h4>
-                Матрица совместимости
-                {% if username2 is none %}
-                    - выбор пользователя
+                Матрица совместимости -
+                {% if username1 is none %}
+                    выбор пользователя
+                {% else %}
+                    {{ username1 }}
                 {% endif %}
                 <a href="{% url 'main:matrix' %}" class="btn btn-sm btn-primary" style="float: right;">Выбрать пользователей</a>
             </h4>

@@ -1,5 +1,10 @@
-<nav class="navbar navbar-expand-md navbar-dark">
-    <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+<nav class="navbar navbar-expand-md navbar-dark ">
+    <a class="navbar-brand" href="/">Рекомендательная система курсов</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'main:new_course' %}">Создать курс</a>
@@ -14,15 +19,7 @@
                 <a class="nav-link" href="{% url 'main:matrix' %}">Матрица близости</a>
             </li>
         </ul>
-    </div>
-    <div class="mx-auto order-0">
-        <a class="navbar-brand mx-auto" href="/">Рекомендательная система курсов</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-    <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
-        <ul class="navbar-nav ml-auto">
+        <ul class="navbar-nav" style="float: right;">
             <li class="nav-item">
                 <a class="nav-link" href="/admin">Admin</a>
             </li>
