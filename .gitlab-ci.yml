@@ -1,0 +1,11 @@
+image: atnartur/docker:latest
+
+stages:
+  - deploy
+
+deploy:
+  stage: deploy
+  script:
+    - docker-compose up -d --build --force-recreate
+  tags:
+    - docker
