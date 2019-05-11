@@ -35,7 +35,7 @@ def get_recommendations_list(username):
                 courses_dict.update({course: courses_dict.get(course, 0) + 1})
 
     sorted_by_value = sorted(courses_dict.items(), key=lambda kv: kv[1])
-    top_5 = reversed(sorted_by_value)[:5]
+    top_5 = list(reversed(sorted_by_value))[:5]
 
     top_dict = {}
     for item in top_5:
