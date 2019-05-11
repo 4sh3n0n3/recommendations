@@ -55,6 +55,6 @@ def get_courses_for_selecting(selected_cources_ids):
 
 
 def calculate_djakarta(username1, username2):
-    courses1 = Choice.objects.filter(user__name=username1)
-    courses2 = Choice.objects.filter(user__name=username2)
+    courses1 = Choice.objects.filter(user__name=username1).values_list('course_id', flat=True)
+    courses2 = Choice.objects.filter(user__name=username2).values_list('course_id', flat=True)
     return djakarta_coef(courses1, courses2)
